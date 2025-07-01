@@ -218,3 +218,8 @@ def store_documents(llamastack_base_url: str, input_dir: dsl.InputPath()):
     except Exception as e:
         print("Embedding insert failed:", e)
         raise Exception(f"Failed to insert documents into vector DB: {e}")
+
+
+@dsl.component(base_image=BASE_IMAGE)
+def hello_world(output_dir: dsl.OutputPath()):
+    print(f"Hello World!")
