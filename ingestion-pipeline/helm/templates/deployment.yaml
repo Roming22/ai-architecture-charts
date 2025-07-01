@@ -70,7 +70,7 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.Version }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- with .Values.args }}
           args:
@@ -78,7 +78,7 @@ spec:
           {{- end }}
           env:
             - name: INGESTION_PIPELINE_IMAGE
-              value: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+              value: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.Version }}"
             - name: LLAMASTACK_BASE_URL
               value: "http://llamastack.{{ .Release.Namespace }}.svc.cluster.local:8321"
             - name: DS_PIPELINE_URL
