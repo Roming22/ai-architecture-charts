@@ -13,16 +13,6 @@ entries:
     version: 0.1.0
   ingestion-pipeline:
   - apiVersion: v2
-    appVersion: 0.3.0
-    created: "2025-07-01T20:04:30.170206577Z"
-    description: A Helm chart for Kubernetes
-    digest: d953ced0022932b15173737e2b4328b04e2f07a8263bc936a5b70b262919ac02
-    name: ingestion-pipeline
-    type: application
-    urls:
-    - https://roming22.github.io/ai-architecture-charts/ingestion-pipeline-0.3.0.tgz
-    version: 0.3.0
-  - apiVersion: v2
     appVersion: 0.2.10
     created: "2025-07-01T20:16:47.986187197Z"
     description: A Helm chart for Kubernetes
