@@ -221,5 +221,5 @@ def store_documents(llamastack_base_url: str, input_dir: dsl.InputPath()):
 
 
 @dsl.component(base_image=BASE_IMAGE)
-def hello_world(output_dir: dsl.OutputPath()):
+def hello_world():
     print(f"Hello World!")

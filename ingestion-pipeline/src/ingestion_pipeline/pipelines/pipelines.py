@@ -29,6 +29,7 @@ def s3_pipeline(pipeline_name: str, llamastack_base_url: str):
         store_task.set_caching_options(False)
 
         hello_world_task = tasks.hello_world()
+        hello_world_task.after(store_task)
 
         for task in (fetch_task, store_task, hello_world_task):
             kubernetes.use_secret_as_env(
