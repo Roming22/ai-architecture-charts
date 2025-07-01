@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   build-and-push:
-    if: github.repository == 'rh-ai-kickstart/ai-architecture-charts'
+    if: github.repository == 'Roming22/ai-architecture-charts'
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -45,6 +45,14 @@ jobs:
         id: version
         run: |
           version=$(grep '^version:' ${{ matrix.chart }} | awk '{print $2}')
+          echo "tag=$version"
+          echo "tag=$version" >> $GITHUB_OUTPUT
+
+      - name: Extract llama-stack version from Chart.yaml
+        id: llama-stack-version
+        run: |
+          version=$(grep '^appVersion:' ${{ matrix.chart }} | awk '{print $2}' | tr -d '"')
+          echo "tag=$version"
           echo "tag=$version" >> $GITHUB_OUTPUT
 
       - name: Build and push ${{ matrix.name }}
@@ -53,12 +61,12 @@ jobs:
           context: ${{ matrix.context }}
           file: ${{ matrix.file }}
           push: true
-          tags: quay.io/ecosystem-appeng/${{ matrix.name }}:${{ steps.version.outputs.tag }}
+          tags: quay.io/rarnaud/${{ matrix.name }}:${{ steps.version.outputs.tag }}
           build-args: |
-            IMAGE_TAG=${{ steps.version.outputs.tag }}
+            IMAGE_TAG=${{ steps.llama-stack-version.outputs.tag }}
 
   package-helm-charts:
-    if: github.repository == 'rh-ai-kickstart/ai-architecture-charts'
+    if: github.repository == 'Roming22/ai-architecture-charts'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -86,7 +94,7 @@ jobs:
 
       - name: Generate Helm index
         run: |
-          helm repo index gh-pages --url https://rh-ai-kickstart.github.io/ai-architecture-charts --merge gh-pages/index.yaml
+          helm repo index gh-pages --url https://roming22.github.io/ai-architecture-charts --merge gh-pages/index.yaml
 
       - name: Commit and push to gh-pages
         run: |
@@ -96,3 +104,10 @@ jobs:
           git add .
           git commit -m "Update Helm chart repo" || echo "No changes to commit"
           git push origin gh-pages
+
+  hello-world:
+    runs-on: ubuntu-latest
+    steps:
+      - name: hello-world
+        run: |
+          echo "Repo: '${{github.repository}}'"
