@@ -32,9 +32,9 @@ def s3_pipeline(pipeline_name: str, llamastack_base_url: str):
         store_task.set_caching_options(False)
         pipeline_tasks.append(store_task)
 
-        # echo_task = tasks.echo()
-        # echo_task.after(store_task)
-        # pipeline_tasks.append(echo_task)
+        echo_task = tasks.echo()
+        echo_task.after(store_task)
+        pipeline_tasks.append(echo_task)
 
         # provenance_task = tasks.generate_provenance(pipeline_name)
         # provenance_task.after(store_task)
