@@ -3,9 +3,9 @@ entries:
   configure-pipeline:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-07-03T19:30:06.219046528Z"
+    created: "2025-07-03T19:56:27.220966865Z"
     description: A Helm chart for Kubernetes
-    digest: 7f8271f4c392770fd5bc4f9c9b4f6b6c198a4b091a3e43a3893382d3522c5a0d
+    digest: 5864149141873101294ab217d7c98190ab4a977225b4b8ace9e648065a9f4bef
     name: configure-pipeline
     type: application
     urls:
@@ -13,8 +13,18 @@ entries:
     version: 0.1.0
   ingestion-pipeline:
   - apiVersion: v2
+    appVersion: 0.2.9
+    created: "2025-07-03T19:56:27.223148775Z"
+    description: A Helm chart for Kubernetes
+    digest: 46d6ab8177a0dcef281f2b1cc980c14220ddce5c94d32d440042248dafe2095e
+    name: ingestion-pipeline
+    type: application
+    urls:
+    - https://roming22.github.io/ai-architecture-charts/ingestion-pipeline-0.3.0.tgz
+    version: 0.3.0
+  - apiVersion: v2
     appVersion: 0.2.10
-    created: "2025-07-03T19:30:06.220027334Z"
+    created: "2025-07-03T19:56:27.222123985Z"
     description: A Helm chart for Kubernetes
     digest: 18ad79ef513c40e68fe81850dcaf52588a36473a7a34fc87eafa98c27520e2da
     name: ingestion-pipeline
@@ -24,7 +34,7 @@ entries:
     version: 0.2.11
   - apiVersion: v2
     appVersion: 0.2.10
-    created: "2025-07-03T19:30:06.219699217Z"
+    created: "2025-07-03T19:56:27.221719613Z"
     description: A Helm chart for Kubernetes
     digest: b1a226c50abf6a5f4ef3b27d187096661bc6ea94888a879473354d734944dbdb
     name: ingestion-pipeline
@@ -34,7 +44,7 @@ entries:
     version: 0.2.10
   - apiVersion: v2
     appVersion: 0.2.9
-    created: "2025-07-03T19:30:06.220664704Z"
+    created: "2025-07-03T19:56:27.222773178Z"
     description: A Helm chart for Kubernetes
     digest: e9d00d2c98162d8731cdb7285ee307983eb1d77f341511411b53de009a6bfa36
     name: ingestion-pipeline
@@ -44,7 +54,7 @@ entries:
     version: 0.2.9
   - apiVersion: v2
     appVersion: 0.2.8
-    created: "2025-07-03T19:30:06.2203543Z"
+    created: "2025-07-03T19:56:27.222444739Z"
     description: A Helm chart for Kubernetes
     digest: 3757ec6f5edc4018465d3c14b37bbfd1e72e01feb62f05f26542592de647a6c8
     name: ingestion-pipeline
@@ -54,7 +64,7 @@ entries:
     version: 0.2.8
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-07-03T19:30:06.219363756Z"
+    created: "2025-07-03T19:56:27.221297087Z"
     description: A Helm chart for Kubernetes
     digest: b8f7286c86bf68e6a246e256611b81e1c400e6a2937fdcbc0d3cbde5396280ca
     name: ingestion-pipeline
@@ -65,9 +75,9 @@ entries:
   llama-stack:
   - apiVersion: v2
     appVersion: 0.2.9
-    created: "2025-07-03T19:30:06.222110324Z"
+    created: "2025-07-03T19:56:27.224661094Z"
     description: A Helm chart for Kubernetes
-    digest: 7fb7f15b32af3ae340501f85578ce9e72cc14b54e78f961b6559719e072115e8
+    digest: d4a091773a44df9c16eb726228242e5d70ae9c4acdb95dc20a258b0c2ae962c5
     name: llama-stack
     type: application
     urls:
@@ -75,7 +85,7 @@ entries:
     version: 0.2.9
   - apiVersion: v2
     appVersion: 0.2.8
-    created: "2025-07-03T19:30:06.221641892Z"
+    created: "2025-07-03T19:56:27.224196459Z"
     description: A Helm chart for Kubernetes
     digest: 74d614de3bb741d59fb690dd27581509a750b8c64287d994dc32efd788e3a48b
     name: llama-stack
@@ -85,7 +95,7 @@ entries:
     version: 0.2.8
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-07-03T19:30:06.221148935Z"
+    created: "2025-07-03T19:56:27.223689243Z"
     description: A Helm chart for Kubernetes
     digest: d6fe8417acf13ef7598bd069fe70082540bed84355300fc67b4afab83204727b
     name: llama-stack
@@ -96,9 +106,9 @@ entries:
   llm-service:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-07-03T19:30:06.222584937Z"
+    created: "2025-07-03T19:56:27.225551602Z"
     description: A Helm chart for Kubernetes
-    digest: 7cf7209c91adb3b3fa5955dd96d8b7972eb855eae8012879fbe3356a58649270
+    digest: d4297dc49bd9fd288be4447e0576b484c05d9f295389b0b8466aebeb3e705c4e
     name: llm-service
     type: application
     urls:
@@ -107,9 +117,9 @@ entries:
   mcp-weather:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-07-03T19:30:06.222845528Z"
+    created: "2025-07-03T19:56:27.226333092Z"
     description: A Helm chart for Kubernetes
-    digest: b3f014322a43b9ac28d6b0a0453c350fe6cd5bf3f7937ba96166c6f5583984f0
+    digest: a669045bde75d5126225e8dc78403d81c1a1a4b0888a1b77af626e4976c5dd7b
     name: mcp-weather
     type: application
     urls:
@@ -118,9 +128,9 @@ entries:
   minio:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-07-03T19:30:06.224120058Z"
+    created: "2025-07-03T19:56:27.226739056Z"
     description: A Helm chart for Kubernetes
-    digest: 5685a8e52a4bf4b36eb39b97417a9e850bdd39d8c329e4449a039ecb5ed9f789
+    digest: 5fe065a3e8c266afefbaf459abf578bab3a7576122b00feb4b28362c8d189a29
     name: minio
     type: application
     urls:
@@ -129,12 +139,12 @@ entries:
   pgvector:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-07-03T19:30:06.224617073Z"
+    created: "2025-07-03T19:56:27.227124903Z"
     description: A Helm chart for Kubernetes
-    digest: fe9baf9364b2420cd3213994db48d0a8aebb832b24b7fbf21ff285304d38c114
+    digest: a2e3772a8782827ce1f2287975f449f72df3ada2bb9f813a4d422437474024fd
     name: pgvector
     type: application
     urls:
     - https://roming22.github.io/ai-architecture-charts/pgvector-0.1.0.tgz
     version: 0.1.0
-generated: "2025-07-03T19:30:06.218690739Z"
+generated: "2025-07-03T19:56:27.220541524Z"
