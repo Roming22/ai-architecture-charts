@@ -229,15 +229,13 @@ def echo():
 
 @dsl.component(
     base_image=BASE_IMAGE,
-    packages_to_install=[
-        "json",
-    ])
-def generate_provenance(pipeline_name: str):
+)
+def generate_provenance():
     import json
     provenance = {
         # Standard attestation fields:
         "_type": "https://in-toto.io/Statement/v1",
-        "subject": pipeline_name,
+        "subject": "Whatever",
 
         # Predicate:
         "predicateType": "https://slsa.dev/provenance/v1",

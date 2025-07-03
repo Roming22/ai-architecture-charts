@@ -36,8 +36,8 @@ def s3_pipeline(pipeline_name: str, llamastack_base_url: str):
         echo_task.after(store_task)
         pipeline_tasks.append(echo_task)
 
-        # provenance_task = tasks.generate_provenance(pipeline_name)
-        # provenance_task.after(store_task)
+        provenance_task = tasks.generate_provenance()
+        provenance_task.after(store_task)
 
         for task in pipeline_tasks:
             kubernetes.use_secret_as_env(
