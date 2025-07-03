@@ -219,42 +219,48 @@ def store_documents(llamastack_base_url: str, input_dir: dsl.InputPath()):
         print("Embedding insert failed:", e)
         raise Exception(f"Failed to insert documents into vector DB: {e}")
 
+# @dsl.component(
+#     base_image=BASE_IMAGE,
+#     )
+# def echo():
+#     print()
+#     print("Hello World!")
+#     print()
 
+# @dsl.component(
+#     base_image=BASE_IMAGE,
+#     packages_to_install=[
+#         "json",
+#     ])
+# def generate_provenance(pipeline_name: str):
+#     import json
+#     provenance = {
+#         # Standard attestation fields:
+#         "_type": "https://in-toto.io/Statement/v1",
+#         "subject": pipeline_name,
 
-@dsl.component(
-    base_image=BASE_IMAGE,
-    packages_to_install=[
-        "json",
-    ])
-def generate_provenance(pipeline_name: str):
-    import json
-    provenance = {
-        # Standard attestation fields:
-        "_type": "https://in-toto.io/Statement/v1",
-        "subject": pipeline_name,
-
-        # Predicate:
-        "predicateType": "https://slsa.dev/provenance/v1",
-        "predicate": {
-            "buildDefinition": {
-                "buildType": "",
-                "externalParameters": {},
-                "internalParameters": {},
-                "resolvedDependencies": [],
-            },
-            "runDetails": {
-                "builder": {
-                    "id": "",
-                    "builderDependencies": [],
-                    "version": {},
-                },
-                "metadata": {
-                    "invocationId": "",
-                    "startedOn": "",
-                    "finishedOn": "",
-                },
-                "byproducts": [],
-            }
-        }
-    }
-    print(json.dumps(provenance, indent=2))
+#         # Predicate:
+#         "predicateType": "https://slsa.dev/provenance/v1",
+#         "predicate": {
+#             "buildDefinition": {
+#                 "buildType": "",
+#                 "externalParameters": {},
+#                 "internalParameters": {},
+#                 "resolvedDependencies": [],
+#             },
+#             "runDetails": {
+#                 "builder": {
+#                     "id": "",
+#                     "builderDependencies": [],
+#                     "version": {},
+#                 },
+#                 "metadata": {
+#                     "invocationId": "",
+#                     "startedOn": "",
+#                     "finishedOn": "",
+#                 },
+#                 "byproducts": [],
+#             }
+#         }
+#     }
+#     print(json.dumps(provenance, indent=2))
