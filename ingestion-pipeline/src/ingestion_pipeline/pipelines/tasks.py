@@ -122,6 +122,7 @@ def store_documents(llamastack_base_url: str, input_dir: dsl.InputPath()):
     # Configuring the vector database
     embedding_model = os.getenv('EMBEDDING_MODEL')
     vector_db_name = os.getenv('VECTOR_DB_NAME')
+    print("Hello:", os.getenv('VECTOR_DB_NAME'))
 
     # Setup docling components
     pipeline_options = PdfPipelineOptions()
@@ -294,4 +295,8 @@ def generate_provenance(input_dir: dsl.InputPath()):
         }
         dependencies.append(dependency)
 
+    print()
+    print("Hello:", os.getenv('VECTOR_DB_NAME'))
+    print("Provenance:")
     print(json.dumps(provenance, indent=2))
+    print()
