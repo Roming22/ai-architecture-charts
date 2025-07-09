@@ -19,19 +19,29 @@ def s3_pipeline(pipeline_name: str, llamastack_base_url: str):
                 'REGION': 'REGION'
         }
 
+        pipeline_tasks=[]
+
         fetch_task = tasks.fetch_from_s3()
         fetch_task.set_caching_options(False)
+        pipeline_tasks.append(fetch_task)
 
         store_task = tasks.store_documents(
             llamastack_base_url=llamastack_base_url,
             input_dir=fetch_task.outputs["output_dir"]
         )
         store_task.set_caching_options(False)
+        pipeline_tasks.append(store_task)
 
-        hello_world_task = tasks.hello_world()
-        hello_world_task.after(store_task)
+        echo_task = tasks.echo()
+        echo_task.after(store_task)
+        pipeline_tasks.append(echo_task)
 
-        for task in (fetch_task, store_task, hello_world_task):
+        provenance_task = tasks.generate_provenance(
+            input_dir=fetch_task.outputs["output_dir"]
+        )
+        provenance_task.after(store_task)
+
+        for task in pipeline_tasks:
             kubernetes.use_secret_as_env(
                 task=task,
                 secret_name=pipeline_name,

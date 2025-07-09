@@ -2,7 +2,7 @@ import os
 
 from kfp import dsl
 
-BASE_IMAGE="python:3.10"
+BASE_IMAGE="python:3.13"
 LLAMASTACK_VERSION=os.environ["LLAMASTACK_VERSION"]
 
 
@@ -219,7 +219,79 @@ def store_documents(llamastack_base_url: str, input_dir: dsl.InputPath()):
         print("Embedding insert failed:", e)
         raise Exception(f"Failed to insert documents into vector DB: {e}")
 
+@dsl.component(
+    base_image=BASE_IMAGE,
+    )
+def echo():
+    print()
+    print("Hello World!")
+    print()
 
-@dsl.component(base_image=BASE_IMAGE)
-def hello_world():
-    print(f"Hello World!")
+@dsl.component(
+    base_image=BASE_IMAGE,
+    packages_to_install=[
+        f"llama-stack-client=={LLAMASTACK_VERSION}",
+        "fire",
+        "requests",
+    ]
+)
+def generate_provenance(input_dir: dsl.InputPath()):
+    import datetime
+    import hashlib
+    import json
+    import llama_stack_client
+    import os
+
+    from pathlib import Path
+
+    provenance = {
+        # Standard attestation fields:
+        "_type": "https://in-toto.io/Statement/v1",
+        "subject": [
+            {
+                "name": f"{os.getenv('VECTOR_DB_NAME')}",
+            },
+        ],
+
+        # Predicate:
+        "predicateType": "https://slsa.dev/provenance/v1",
+        "predicate": {
+            "buildDefinition": {
+                "buildType": "",
+                "externalParameters": {},
+                "internalParameters": {},
+                "resolvedDependencies": [],
+            },
+            "runDetails": {
+                "builder": {
+                    "id": "",
+                    "builderDependencies": [],
+                    "version": {
+                        "llama_stack_client": f"{llama_stack_client.__version__}"
+                    },
+                },
+                "metadata": {
+                    "invocationId": "",
+                    "startedOn": "",
+                    "finishedOn": f"{datetime.datetime.now(datetime.UTC).isoformat()}",
+                },
+                "byproducts": [],
+            }
+        }
+    }
+
+    chunk_size = 2**20
+    files=[p for p in Path(input_dir).iterdir() if p.is_file()]
+    dependencies = provenance["predicate"]["buildDefinition"]["resolvedDependencies"]
+    for file in files:
+        shasum = hashlib.sha512()
+        with file.open("rb") as f:
+            for chunk in iter(lambda: f.read(chunk_size), b""):
+                shasum.update(chunk)
+        dependency = {
+            "source": str(file).removeprefix(str(input_dir)+os.sep),
+            "sha512": shasum.hexdigest(),
+        }
+        dependencies.append(dependency)
+
+    print(json.dumps(provenance, indent=2))
