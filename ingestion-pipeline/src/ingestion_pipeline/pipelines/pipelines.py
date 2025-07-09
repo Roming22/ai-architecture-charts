@@ -39,6 +39,7 @@ def s3_pipeline(pipeline_name: str, llamastack_base_url: str):
         provenance_task = tasks.generate_provenance(
             input_dir=fetch_task.outputs["output_dir"]
         )
+        provenance_task.set_caching_options(False)
         provenance_task.after(store_task)
 
         for task in pipeline_tasks:
