@@ -308,37 +308,45 @@ def generate_provenance(input_dir: dsl.InputPath()):
     ]
 )
 def cluster_access_test():
-    from kubernetes import client, config, stream
-
-    # Load kubeconfig (or use config.load_incluster_config() if running inside a cluster)
-    # config.load_kube_config()
-    config.load_incluster_config()
-
     # Define parameters
     namespace = "chatbot-app-ns"
-    pod_name = "pgvector-0"
-    container_name = "pgvector"
+    pod = "pgvector-0"
+    container = "pgvector"
     db_username = "postgres"
     db_name="rag_blueprint"
-    remote_file=f"/tmp/{db_name}.sql"
 
+    print(get_db_sha512sum(namespace, pod, container, db_username, db_name))
+
+def get_db_sha512sum(
+        namespace: str,
+        pod: str,
+        container: str,
+        db_username: str,
+        db_name: str
+    ) -> str:
+    from kubernetes import client, config, stream
+
+    config.load_incluster_config()
+
+    remote_file=f"/tmp/{db_name}.sql"
     command = [
         "/bin/bash",
         "-c",
         f"pg_dump -U {db_username} -d {db_name} -f {remote_file}; sha512sum {remote_file}",
     ]
+
     print()
     print("Executing:", ' '.join(command))
     # Exec into the container
     resp = stream.stream(
         client.CoreV1Api().connect_get_namespaced_pod_exec,
-        name=pod_name,
         namespace=namespace,
+        name=pod,
+        container=container,
         command=command,
-        container=container_name,
         stderr=True,
         stdin=True,
         stdout=True,
         tty=True,
     )
-    print(resp)
+    return resp.split()[0]
