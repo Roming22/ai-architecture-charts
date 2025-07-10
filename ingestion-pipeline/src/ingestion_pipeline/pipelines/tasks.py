@@ -320,12 +320,12 @@ def cluster_access_test():
     container_name = "pgvector"
     db_username = "postgres"
     db_name="rag_blueprint"
-    remote_file=f"/tmp/{db_name}.dump"
+    remote_file=f"/tmp/{db_name}.sql"
 
     command = [
         "/bin/bash",
         "-c",
-        f"pg_dump -U {db_username} -d db_name -F c -f {remote_file}; sha512sum {remote_file}",
+        f"pg_dump -U {db_username} -d {db_name} -f {remote_file}; sha512sum {remote_file}",
     ]
     print()
     print("Executing:", ' '.join(command))
