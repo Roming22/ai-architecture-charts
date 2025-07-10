@@ -318,8 +318,17 @@ def cluster_access_test():
     namespace = "chatbot-app-ns"
     pod_name = "pgvector-0"
     container_name = "pgvector"
-    command = ["/bin/sh", "-c", "hostname -f; hostname -i"]
+    db_username = "postgres"
+    db_name="rag_blueprint"
+    remote_file=f"/tmp/{db_name}.dump"
 
+    command = [
+        "/bin/bash",
+        "-c",
+        f"pg_dump -U {db_username} -d db_name -F c -f {remote_file}; sha512sum {remote_file}",
+    ]
+    print()
+    print("Executing:", ' '.join(command))
     # Exec into the container
     resp = stream.stream(
         client.CoreV1Api().connect_get_namespaced_pod_exec,
@@ -332,5 +341,4 @@ def cluster_access_test():
         stdout=True,
         tty=True,
     )
-
     print(resp)
