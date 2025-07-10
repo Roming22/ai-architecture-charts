@@ -311,7 +311,8 @@ def cluster_access_test():
     from kubernetes import client, config, stream
 
     # Load kubeconfig (or use config.load_incluster_config() if running inside a cluster)
-    config.load_kube_config()
+    # config.load_kube_config()
+    config.load_incluster_config()
 
     # Define parameters
     namespace = "chatbot-app-ns"
