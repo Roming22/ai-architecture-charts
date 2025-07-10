@@ -233,6 +233,7 @@ def echo():
     packages_to_install=[
         f"llama-stack-client=={LLAMASTACK_VERSION}",
         "fire",
+        "kubernetes",
         "requests",
     ]
 )
@@ -243,16 +244,16 @@ def generate_provenance(input_dir: dsl.InputPath()):
     import llama_stack_client
     import os
 
+    from kubernetes import client, config, stream
     from pathlib import Path
 
+    #
+    # Provenance skeleton
+    #
     provenance = {
         # Standard attestation fields:
         "_type": "https://in-toto.io/Statement/v1",
-        "subject": [
-            {
-                "name": f"{os.getenv('VECTOR_DB_NAME')}",
-            },
-        ],
+        "subject": [],
 
         # Predicate:
         "predicateType": "https://slsa.dev/provenance/v1",
@@ -281,6 +282,44 @@ def generate_provenance(input_dir: dsl.InputPath()):
         }
     }
 
+    #
+    # Get hash of database content
+    #
+    config.load_incluster_config()
+
+    namespace = "chatbot-app-ns"
+    pod = "pgvector-0"
+    container = "pgvector"
+    db_username = "postgres"
+    db_name="rag_blueprint"
+    remote_file=f"/tmp/{db_name}.sql"
+
+    command = [
+        "/bin/bash",
+        "-c",
+        f"pg_dump -U {db_username} -d {db_name} -f {remote_file}; sha512sum {remote_file}",
+    ]
+    # Exec into the container
+    resp = stream.stream(
+        client.CoreV1Api().connect_get_namespaced_pod_exec,
+        namespace=namespace,
+        name=pod,
+        container=container,
+        command=command,
+        stderr=True,
+        stdin=True,
+        stdout=True,
+        tty=True,
+    )
+    subject = {
+        "name": db_name,
+        "sha512": resp.split()[0],
+    }
+    provenance["subject"].append(subject)
+
+    #
+    # Get hash of source data
+    #
     chunk_size = 2**20
     files=[p for p in Path(input_dir).iterdir() if p.is_file()]
     dependencies = provenance["predicate"]["buildDefinition"]["resolvedDependencies"]
@@ -300,53 +339,3 @@ def generate_provenance(input_dir: dsl.InputPath()):
     print("Provenance:")
     print(json.dumps(provenance, indent=2))
     print()
-
-@dsl.component(
-    base_image=BASE_IMAGE,
-    packages_to_install=[
-        "kubernetes",
-    ]
-)
-def cluster_access_test():
-    # Define parameters
-    namespace = "chatbot-app-ns"
-    pod = "pgvector-0"
-    container = "pgvector"
-    db_username = "postgres"
-    db_name="rag_blueprint"
-
-    print(get_db_sha512sum(namespace, pod, container, db_username, db_name))
-
-def get_db_sha512sum(
-        namespace: str,
-        pod: str,
-        container: str,
-        db_username: str,
-        db_name: str
-    ) -> str:
-    from kubernetes import client, config, stream
-
-    config.load_incluster_config()
-
-    remote_file=f"/tmp/{db_name}.sql"
-    command = [
-        "/bin/bash",
-        "-c",
-        f"pg_dump -U {db_username} -d {db_name} -f {remote_file}; sha512sum {remote_file}",
-    ]
-
-    print()
-    print("Executing:", ' '.join(command))
-    # Exec into the container
-    resp = stream.stream(
-        client.CoreV1Api().connect_get_namespaced_pod_exec,
-        namespace=namespace,
-        name=pod,
-        container=container,
-        command=command,
-        stderr=True,
-        stdin=True,
-        stdout=True,
-        tty=True,
-    )
-    return resp.split()[0]
