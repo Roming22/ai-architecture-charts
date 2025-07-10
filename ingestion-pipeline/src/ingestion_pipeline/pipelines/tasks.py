@@ -222,14 +222,6 @@ def store_documents(llamastack_base_url: str, input_dir: dsl.InputPath()):
 
 @dsl.component(
     base_image=BASE_IMAGE,
-    )
-def echo():
-    print()
-    print("Hello World!")
-    print()
-
-@dsl.component(
-    base_image=BASE_IMAGE,
     packages_to_install=[
         f"llama-stack-client=={LLAMASTACK_VERSION}",
         "fire",
@@ -266,7 +258,7 @@ def generate_provenance(input_dir: dsl.InputPath()):
             },
             "runDetails": {
                 "builder": {
-                    "id": "",
+                    "id": os.getenv("PIPELINE_NAME"),
                     "builderDependencies": [],
                     "version": {
                         "llama_stack_client": f"{llama_stack_client.__version__}"
