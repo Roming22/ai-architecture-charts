@@ -32,6 +32,10 @@ def s3_pipeline(pipeline_name: str, llamastack_base_url: str):
         store_task.set_caching_options(False)
         pipeline_tasks.append(store_task)
 
+        cluster_task = tasks.cluster_access_test()
+        cluster_task.set_caching_options(False)
+        pipeline_tasks.append(cluster_task)
+
         echo_task = tasks.echo()
         echo_task.after(store_task)
         pipeline_tasks.append(echo_task)

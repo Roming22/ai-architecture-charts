@@ -300,3 +300,36 @@ def generate_provenance(input_dir: dsl.InputPath()):
     print("Provenance:")
     print(json.dumps(provenance, indent=2))
     print()
+
+@dsl.component(
+    base_image=BASE_IMAGE,
+    packages_to_install=[
+        "kubernetes",
+    ]
+)
+def cluster_access_test():
+    from kubernetes import client, config, stream
+
+    # Load kubeconfig (or use config.load_incluster_config() if running inside a cluster)
+    config.load_kube_config()
+
+    # Define parameters
+    namespace = "chatbot-app-ns"
+    pod_name = "pgvector-0"
+    container_name = "pgvector"
+    command = ["/bin/sh", "-c", "hostname -f; hostname -i"]
+
+    # Exec into the container
+    resp = stream.stream(
+        client.CoreV1Api().connect_get_namespaced_pod_exec,
+        name=pod_name,
+        namespace=namespace,
+        command=command,
+        container=container_name,
+        stderr=True,
+        stdin=True,
+        stdout=True,
+        tty=True,
+    )
+
+    print(resp)
