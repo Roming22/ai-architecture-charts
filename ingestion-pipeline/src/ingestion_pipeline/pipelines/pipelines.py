@@ -9,7 +9,7 @@ def s3_pipeline(pipeline_name: str, llamastack_base_url: str):
         from kfp import kubernetes
 
         secret_key_to_env = {
-                'PIPELINE_NAME': pipeline_name,
+                'PIPELINE_NAME': "fetch-and-store-pipeline",
                 'SOURCE': 'SOURCE',
                 'EMBEDDING_MODEL': 'EMBEDDING_MODEL',
                 'VECTOR_DB_NAME': 'VECTOR_DB_NAME',

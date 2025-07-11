@@ -261,7 +261,8 @@ def generate_provenance(input_dir: dsl.InputPath()):
                     "id": os.getenv("PIPELINE_NAME"),
                     "builderDependencies": [],
                     "version": {
-                        "llama_stack_client": f"{llama_stack_client.__version__}"
+                        "embedding_model": os.getenv('EMBEDDING_MODEL'),
+                        "llama_stack_client": f"{llama_stack_client.__version__}",
                     },
                 },
                 "metadata": {
@@ -304,7 +305,7 @@ def generate_provenance(input_dir: dsl.InputPath()):
         tty=True,
     )
     subject = {
-        "name": db_name,
+        "name": f"{db_name}.{os.getenv('VECTOR_DB_NAME')}",
         "sha512": resp.split()[0],
     }
     provenance["subject"].append(subject)
