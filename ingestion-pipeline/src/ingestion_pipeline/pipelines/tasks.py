@@ -209,9 +209,11 @@ def store_documents(llamastack_base_url: str, input_dir: dsl.InputPath()):
 def generate_provenance(input_dir: dsl.InputPath()):
     import base64
     import datetime
+    import gzip
     import hashlib
     import json
     import llama_stack_client
+    import io
     import os
     import requests
     import subprocess
@@ -297,17 +299,31 @@ def generate_provenance(input_dir: dsl.InputPath()):
             )
 
     def get_cosign() -> str:
-        dest_path = "/tmp/cosign"
-        url = "https://github.com/sigstore/cosign/releases/download/v2.5.2/cosign-linux-amd64"
+        # Get URL
+        route = client.CustomObjectsApi().list_namespaced_custom_object(
+            group="route.openshift.io",
+            version="v1",
+            namespace="trusted-artifact-signer",
+            plural="routes",
+            label_selector="app.kubernetes.io/component=client-server"
+        )
+        host = route["items"][0]["spec"]["host"]
+        url = f"https://{host}/clients/linux/cosign-amd64.gz"
 
-        # Download the file
+        # Download the binary
+        dest_path = "/tmp/cosign"
         response = requests.get(url)
         response.raise_for_status()
 
-        with open(dest_path, "wb") as f:
-            f.write(response.content)
+        # Decompress it
+        dest_path = "/tmp/cosign"
+        with gzip.GzipFile(fileobj=io.BytesIO(response.content)) as f:
+            decompressed = f.read()
 
-        # Make it executable
+        # Write the binary to disk and make it executable
+        dest_path = "/tmp/cosign"
+        with open(dest_path, "wb") as f:
+            f.write(decompressed)
         os.chmod(dest_path, 0o755)
 
         return dest_path
