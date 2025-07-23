@@ -223,41 +223,33 @@ def generate_provenance(input_dir: dsl.InputPath()):
     # Connect to the cluster
     config.load_incluster_config()
 
-    def get_provenance_skeleton():
+    def get_predicate_skeleton() -> dict:
         return {
-            # Standard attestation fields:
-            "_type": "https://in-toto.io/Statement/v1",
-            "subject": [],
-
-            # Predicate:
-            "predicateType": "https://slsa.dev/provenance/v1",
-            "predicate": {
-                "buildDefinition": {
-                    "buildType": "",
-                    "externalParameters": {},
-                    "internalParameters": {},
-                    "resolvedDependencies": [],
+            "buildDefinition": {
+                "buildType": "",
+                "externalParameters": {},
+                "internalParameters": {},
+                "resolvedDependencies": [],
+            },
+            "runDetails": {
+                "builder": {
+                    "id": "",
+                    "builderDependencies": [],
+                    "version": {
+                        "embedding_model": os.getenv('EMBEDDING_MODEL'),
+                        "llama_stack_client": f"{llama_stack_client.__version__}",
+                    },
                 },
-                "runDetails": {
-                    "builder": {
-                        "id": "",
-                        "builderDependencies": [],
-                        "version": {
-                            "embedding_model": os.getenv('EMBEDDING_MODEL'),
-                            "llama_stack_client": f"{llama_stack_client.__version__}",
-                        },
-                    },
-                    "metadata": {
-                        "invocationId": "",
-                        "startedOn": "",
-                        "finishedOn": f"{datetime.datetime.now(datetime.UTC).isoformat()}",
-                    },
-                    "byproducts": [],
-                }
+                "metadata": {
+                    "invocationId": "",
+                    "startedOn": "",
+                    "finishedOn": f"{datetime.datetime.now(datetime.UTC).isoformat()}",
+                },
+                "byproducts": [],
             }
         }
 
-    def get_db_sha():
+    def get_db_sha() -> tuple:
         secret_name="pgvector" # Needs to be hardcoded for the moment
 
         with open("/var/run/secrets/kubernetes.io/serviceaccount/namespace") as f:
@@ -346,24 +338,10 @@ def generate_provenance(input_dir: dsl.InputPath()):
         key = base64.b64decode(secret.data["cosign.key"]).decode("utf-8")
         password = base64.b64decode(secret.data["cosign.password"]).decode("utf-8")
         return (key, password)
-
-    def sign(data: str):
-        bin_path = get_cosign()
+    
+    def run_cosign(command: list):
         cosign_key, cosign_password = get_signing_key()
-        rekor_url = get_rekor()
 
-        file_path = "/tmp/data.json"
-        with open(file_path, "w") as f:
-            f.write(data)
-
-        command = [
-            bin_path,
-            "sign-blob",
-            file_path,
-            f"--key=env://COSIGN_KEY",
-            f"--rekor-url={rekor_url}",
-            "-y",
-        ]
         result = subprocess.run(
             command,
             capture_output=True,
@@ -380,22 +358,49 @@ def generate_provenance(input_dir: dsl.InputPath()):
             print(result.stderr)
             raise RuntimeError("cosign command failed")
 
+    def cosign(predicate: str, blob: str) -> str:
+        bin_path = get_cosign()
+        rekor_url = get_rekor()
+
+        predicate_path = "/tmp/predicate.json"
+        with open(predicate_path, "w") as f:
+            f.write(predicate)
+
+        blob_path = "/tmp/blob.txt"
+        with open(blob_path, "w") as f:
+            f.write(blob)
+
+        run_cosign([
+            bin_path,
+            "attest-blob",
+            blob_path,
+            f"--predicate={predicate_path}",
+            f"--key=env://COSIGN_KEY",
+            f"--rekor-url={rekor_url}",
+            "-y",
+        ])
+
+        run_cosign([
+            bin_path,
+            "sign-blob",
+            blob_path,
+            f"--key=env://COSIGN_KEY",
+            f"--rekor-url={rekor_url}",
+            "-y",
+        ])
+
         shasum = hashlib.sha256()
-        shasum.update(provenance_str.encode())
+        shasum.update(blob.encode())
         return shasum.hexdigest()
 
-    provenance = get_provenance_skeleton()
+    predicate = get_predicate_skeleton()
 
     # Add subject
     db_name, db_sha = get_db_sha()
-    subject = {
-        "name": db_name,
-        "sha512": db_sha,
-    }
-    provenance["subject"].append(subject)
+    blob = f"{db_name}:{db_sha}"
 
     # Add sources
-    dependencies = provenance["predicate"]["buildDefinition"]["resolvedDependencies"]
+    dependencies = predicate["buildDefinition"]["resolvedDependencies"]
     for source, sha in get_sources_sha():
         dependency = {
             "source": source,
@@ -404,12 +409,12 @@ def generate_provenance(input_dir: dsl.InputPath()):
         dependencies.append(dependency)
 
     # Sign
-    provenance_str = json.dumps(provenance, indent=2)
+    predicate_str = json.dumps(predicate, indent=2)
     print()
-    print("Provenance:")
-    print(provenance_str)
+    print("Predicate:")
+    print(predicate_str)
     print()
 
-    sha = sign(provenance_str)
+    sha = cosign(predicate_str, blob)
     print(f"Hash: 'sha256:{sha}'")
     print()
