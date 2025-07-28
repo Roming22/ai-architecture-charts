@@ -1,0 +1,69 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: validate-embeddings
+spec:
+  schedule: "*/5 * * * *"  # Every 5 minutes
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: validate-embeddings
+              image: "image-registry.openshift-image-registry.svc:5000/openshift/tools:latest"
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  echo "Running script at $(date)"
+                  set -o errexit
+                  set -o nounset
+                  set -o pipefail
+
+                  # Get DB sha
+                  DB_SHA="$(
+                    oc exec "pods/$DB_HOST-0" -- bash -c \
+                    "pg_dump -U $DB_USER -d $DB_NAME | sha512sum - | cut -d' ' -f1"
+                  )"
+                  echo "DB_SHA: $DB_SHA"
+
+                  # Get rekor
+                  REKOR_URL="https://$(oc get routes -n trusted-artifact-signer -l "app.kubernetes.io/component=client-server" -o jsonpath="{.items[0].spec.host}")"
+                  curl --output /tmp/rekor-cli.gz --silent $REKOR_URL/clients/linux/rekor-cli-amd64.gz
+                  gunzip /tmp/rekor-cli.gz
+                  chmod +x /tmp/rekor-cli
+
+                  # Get attestation from rekor
+                  ARTIFACT_SHA="$(echo -n "$DB_SHA" | sha256sum - | cut -d' ' -f1)"
+                  REKOR_URL="https://$(oc get routes -n trusted-artifact-signer -l "app.kubernetes.io/name=rekor-server" -o jsonpath="{.items[0].spec.host}")"
+
+                  echo "> rekor-cli search --rekor_server '$REKOR_URL' --sha $ARTIFACT_SHA"
+                  ENTRIES="$(/tmp/rekor-cli search --rekor_server "$REKOR_URL" --sha "$ARTIFACT_SHA")"
+                  echo "Entries: $ENTRIES"
+
+                  if [ "$ENTRIES" == "0" ]; then
+                    echo "[ERROR] Unknown database SHA."
+                    exit 1
+                  fi
+
+                  echo "Done."
+              env:
+                - name: DB_HOST
+                  valueFrom:
+                    secretKeyRef:
+                      name: pgvector
+                      key: host
+                - name: DB_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: pgvector
+                      key: dbname
+                - name: DB_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: pgvector
+                      key: user
+          restartPolicy: Never
+          serviceAccountName: pipeline-runner-dspa
