@@ -48,6 +48,14 @@ spec:
                     exit 1
                   fi
 
+                  # Get attestation
+                  # https://search.sigstore.dev/?hash=sha256:05022c671e63971799cbe44af2631de2c0d6608b4a59214c4641af05411e28fc
+
+                  # cosign verify-blob --key cosign.pub --signature rekor-file $ARTIFACT_SHA
+                  # cosign verify-blob-attestation
+
+                  # Apply policy
+
                   echo "Done."
               env:
                 - name: DB_HOST

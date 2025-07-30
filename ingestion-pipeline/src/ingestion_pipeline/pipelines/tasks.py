@@ -406,6 +406,8 @@ def generate_provenance(input_dir: dsl.InputPath()):
             print("Error:")
             print(result.stderr)
             raise RuntimeError("cosign command failed")
+        
+        return result.stdout
 
     def cosign(predicate: str, blob: str) -> str:
         bin_path = get_cosign()
@@ -419,7 +421,9 @@ def generate_provenance(input_dir: dsl.InputPath()):
         with open(blob_path, "w") as f:
             f.write(blob)
 
-        run_cosign([
+        print()
+        print("Attesting blob")
+        result = run_cosign([
             bin_path,
             "attest-blob",
             blob_path,
@@ -428,6 +432,8 @@ def generate_provenance(input_dir: dsl.InputPath()):
             f"--rekor-url={rekor_url}",
             "-y",
         ])
+        print(result)
+        # https://search.sigstore.dev/?hash=sha256:05022c671e63971799cbe44af2631de2c0d6608b4a59214c4641af05411e28fc
 
         run_cosign([
             bin_path,
