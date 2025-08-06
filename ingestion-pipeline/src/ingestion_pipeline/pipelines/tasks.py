@@ -354,22 +354,37 @@ def generate_provenance(input_dir: dsl.InputPath()):
         url = f"https://{host}/clients/linux/cosign-amd64.gz"
 
         # Download the binary archive
-        dest_path = "/tmp/cosign"
         response = requests.get(url)
         response.raise_for_status()
 
         # Decompress the archive
-        dest_path = "/tmp/cosign"
         with gzip.GzipFile(fileobj=io.BytesIO(response.content)) as f:
             decompressed = f.read()
 
         # Write the binary to disk and make it executable
-        dest_path = "/tmp/cosign"
-        with open(dest_path, "wb") as f:
+        bin_path = "/tmp/cosign"
+        with open(bin_path, "wb") as f:
             f.write(decompressed)
-        os.chmod(dest_path, 0o755)
+        os.chmod(bin_path, 0o755)
 
-        return dest_path
+
+        # Get TUF URL
+        route = client.CustomObjectsApi().list_namespaced_custom_object(
+            group="route.openshift.io",
+            version="v1",
+            namespace="trusted-artifact-signer",
+            plural="routes",
+            label_selector="app.kubernetes.io/component=tuf"
+        )
+        tuf_url=f"https://{route["items"][0]["spec"]["host"]}"
+        run_cosign([
+            bin_path,
+            "initialize",
+            f"--mirror={tuf_url}",
+            f"--root={tuf_url}/root.json",
+        ])
+
+        return bin_path
 
     def get_rekor() -> str:
         route = client.CustomObjectsApi().list_namespaced_custom_object(
@@ -396,7 +411,8 @@ def generate_provenance(input_dir: dsl.InputPath()):
             capture_output=True,
             env={
                 "COSIGN_KEY": cosign_key,
-                "COSIGN_PASSWORD": cosign_password
+                "COSIGN_PASSWORD": cosign_password,
+                "HOME": "/tmp",
             },
             text=True
         )
@@ -407,28 +423,47 @@ def generate_provenance(input_dir: dsl.InputPath()):
             print(result.stderr)
             raise RuntimeError("cosign command failed")
 
+        print("Error:")
+        print(result.stderr)
+
+        return result.stdout
+
     def cosign(predicate: str, blob: str) -> str:
         bin_path = get_cosign()
         rekor_url = get_rekor()
+        # Workaround for TAS storage issue
+        rekor_url = "https://rekor.sigstage.dev"
 
         predicate_path = "/tmp/predicate.json"
         with open(predicate_path, "w") as f:
             f.write(predicate)
 
+        print()
+        print("Attesting blob")
         blob_path = "/tmp/db.sha512sum"
+        blob_data=f"att:{blob}"
         with open(blob_path, "w") as f:
-            f.write(blob)
-
+            f.write(blob_data)
         run_cosign([
             bin_path,
             "attest-blob",
             blob_path,
-            f"--predicate={predicate_path}",
-            f"--key=env://COSIGN_KEY",
-            f"--rekor-url={rekor_url}",
+            "--key=env://COSIGN_KEY",
+            "--predicate="+predicate_path,
+            "--rekor-entry-type=intoto",
+            "--rekor-url="+rekor_url,
             "-y",
         ])
+        shasum = hashlib.sha256()
+        shasum.update(blob_data.encode())
+        att_sha = shasum.hexdigest()
 
+        print()
+        print("Signing blob")
+        blob_path = "/tmp/db.sha512sum"
+        blob_data=f"sig:{blob}"
+        with open(blob_path, "w") as f:
+            f.write(blob_data)
         run_cosign([
             bin_path,
             "sign-blob",
@@ -437,10 +472,11 @@ def generate_provenance(input_dir: dsl.InputPath()):
             f"--rekor-url={rekor_url}",
             "-y",
         ])
-
         shasum = hashlib.sha256()
-        shasum.update(blob.encode())
-        return shasum.hexdigest()
+        shasum.update(blob_data.encode())
+        sig_sha = shasum.hexdigest()
+
+        return (att_sha, sig_sha)
 
     predicate = get_predicate_skeleton()
 
@@ -458,12 +494,16 @@ def generate_provenance(input_dir: dsl.InputPath()):
 
     # Sign
     predicate_str = json.dumps(predicate, indent=2)
-    print()
+    print("\n\n")
     print("Predicate:")
     print(predicate_str)
+    print("\n\n")
     print()
 
-    sha = cosign(predicate_str, db_sha)
+    att_sha, sig_sha = cosign(predicate_str, db_sha)
+    print("\n\n")
     print(f"DB sha: '{db_sha}'")
-    print(f"Hash: 'sha256:{sha}'")
-    print()
+    print(f"Attestation Hash: 'sha256:{att_sha}'")
+    print(f"Signing Hash: 'sha256:{sig_sha}'")
+
+    print("\n\n")
