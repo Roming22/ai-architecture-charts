@@ -468,8 +468,8 @@ def generate_provenance(input_dir: dsl.InputPath()):
             bin_path,
             "sign-blob",
             blob_path,
-            f"--key=env://COSIGN_KEY",
-            f"--rekor-url={rekor_url}",
+            "--key=env://COSIGN_KEY",
+            "--rekor-url="+rekor_url,
             "-y",
         ])
         shasum = hashlib.sha256()

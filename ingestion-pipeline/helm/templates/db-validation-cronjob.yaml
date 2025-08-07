@@ -36,7 +36,6 @@ spec:
 
                   # Get tas binaries
                   REKOR_URL="https://$(oc get routes -n trusted-artifact-signer -l "app.kubernetes.io/component=client-server" -o jsonpath="{.items[0].spec.host}")"
-                  set -x
                   for BIN in cosign rekor-cli; do
                     curl --output /tmp/bin/$BIN.gz --silent $REKOR_URL/clients/linux/$BIN-amd64.gz
                     gunzip /tmp/bin/$BIN.gz
@@ -53,40 +52,48 @@ spec:
                   REKOR_URL="https://rekor.sigstage.dev"
 
                   get_record() {
-                    BLOB="$1"
-                    ARTIFACT_SHA="$(echo -n "$BLOB" | sha256sum - | cut -d' ' -f1)"
-                    ENTRIES="$(rekor-cli search --rekor_server="$REKOR_URL" --sha "$ARTIFACT_SHA" 2>/dev/null | wc -l)"
+                    ENTRIES="$(rekor-cli search --rekor_server="$REKOR_URL" --sha "$1" 2>/dev/null | wc -l)"
                     if [ "$ENTRIES" == "0" ]; then
                       echo "[ERROR] Unknown database SHA."
                       exit 1
                     fi
 
-                    UUID="$(rekor-cli search --rekor_server="$REKOR_URL" --sha="$ARTIFACT_SHA" 2>/dev/null | head -1)"
+                    UUID="$(rekor-cli search --rekor_server="$REKOR_URL" --sha="$1" 2>/dev/null | head -1)"
                     rekor-cli get --rekor_server="$REKOR_URL" --uuid="$UUID"
                   }
 
                   # Retrieve attestation
                   ATTESTATION_PATH="/tmp/attestation.json"
-                  get_record "att:$DB_SHA" | yq --prettyPrint ".Attestation" > "$ATTESTATION_PATH"
-                  echo "Attestation:"
+                  BLOB="att:$DB_SHA"
+                  ARTIFACT_SHA="$(echo -n "$BLOB" | sha256sum - | cut -d' ' -f1)"
+                  get_record "$ARTIFACT_SHA" | yq --prettyPrint ".Attestation" > "$ATTESTATION_PATH"
+                  echo "# Attestation"
+                  echo "blob: $BLOB"
+                  echo "sha: $ARTIFACT_SHA"
                   cat "$ATTESTATION_PATH"
                   echo
 
                   # Retrieve signature
                   # https://search.sigstore.dev/?hash=sha256:05022c671e63971799cbe44af2631de2c0d6608b4a59214c4641af05411e28fc
                   SIGNATURE_PATH="/tmp/signature.json"
-                  get_record "sig:$DB_SHA" | yq ".Body.HashedRekordObj.signature.content" > "$SIGNATURE_PATH"
-                  echo "Signature:"
+                  BLOB="sig:$DB_SHA"
+                  ARTIFACT_SHA="$(echo -n "$BLOB" | sha256sum - | cut -d' ' -f1)"
+                  get_record "$ARTIFACT_SHA" | yq ".Body.HashedRekordObj.signature.content" > "$SIGNATURE_PATH"
+                  echo "Signature"
+                  echo "blob: $BLOB"
+                  echo "sha: $ARTIFACT_SHA"
                   cat "$SIGNATURE_PATH"
                   echo
 
                   TUF_URL="https://$(oc get routes -n trusted-artifact-signer -l "app.kubernetes.io/component=tuf" -o jsonpath="{.items[0].spec.host}")"
                   export HOME="/tmp"
                   cosign initialize --mirror="$TUF_URL" --root="$TUF_URL/root.json"
-                  # cosign verify-blob --key=k8s://openshift-pipelines/signing-secrets --rekor-url="$REKOR_URL" --signature rekor-file $ARTIFACT_SHA
+                  # cosign verify-blob "$ARTIFACT_SHA" --key=k8s://openshift-pipelines/signing-secrets --rekor-url="$REKOR_URL" --signature rekor-file
                   # cosign verify-blob-attestation --rekor-url="$REKOR_URL"
 
                   # Apply policy
+                  echo "No policy to apply"
+                  echo
 
                   echo "Done."
               env:
