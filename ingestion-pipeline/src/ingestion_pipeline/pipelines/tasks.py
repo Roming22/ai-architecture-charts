@@ -377,11 +377,21 @@ def generate_provenance(input_dir: dsl.InputPath()):
             label_selector="app.kubernetes.io/component=tuf"
         )
         tuf_url=f"https://{route["items"][0]["spec"]["host"]}"
+        root_path=f"{tuf_url}/root.json"
+
+        # Workaroud for broken TAS
+        tuf_url="https://tuf-repo-cdn.sigstage.dev"
+        response = requests.get("https://raw.githubusercontent.com/sigstore/root-signing-staging/main/metadata/root_history/1.root.json")
+        response.raise_for_status()
+        root_path="/tmp/tuf-root.json"
+        with open(root_path, "wb") as f:
+            f.write(response.content)
+
         run_cosign([
             bin_path,
             "initialize",
             f"--mirror={tuf_url}",
-            f"--root={tuf_url}/root.json",
+            f"--root={root_path}",
         ])
 
         return bin_path
@@ -425,6 +435,8 @@ def generate_provenance(input_dir: dsl.InputPath()):
 
         print("Error:")
         print(result.stderr)
+        print("Output:")
+        print(result.stdout)
 
         return result.stdout
 
