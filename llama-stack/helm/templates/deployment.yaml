@@ -43,11 +43,11 @@ spec:
             - -c
             - |
               set -e
-              for url_data in {{ range $key, $model := $models }}{{- if $model.enabled }}{{ $model.url }}/models#{{ $model.apiToken }}{{ end }}{{ end }}; do
-                echo "Waiting for $url..."
+              for url_data in {{ range $key, $model := $models }}{{- if $model.enabled }}{{ $model.url }}/models#{{ $model.apiToken }} {{ end }}{{ end }}; do
                 url_components=(${url_data//#/ })
                 url=${url_components[0]}
                 auth=${url_components[1]}
+                echo "Waiting for $url..."
                 curl_options=("-ksf" "$url")
                 if [[ -n "$auth" ]]; then
                   curl_options+=("-H" "Authorization: Bearer $auth")
