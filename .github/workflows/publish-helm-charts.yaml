@@ -2,8 +2,6 @@ name: Build Packages and Publish Helm Charts
 
 on:
   push:
-    branches:
-      - 'main'
   workflow_dispatch:
 
 permissions:
@@ -13,7 +11,6 @@ permissions:
 
 jobs:
   build-and-push:
-    if: github.repository == 'rh-ai-quickstart/ai-architecture-charts'
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -22,10 +19,6 @@ jobs:
             file: ingestion-pipeline/Containerfile
             chart: ingestion-pipeline/helm/Chart.yaml
             context: ingestion-pipeline/src
-          - name: mcp-weather
-            file: mcp-servers/weather/Containerfile
-            context: mcp-servers/weather/src
-            chart: mcp-servers/helm/Chart.yaml
 
     steps:
       - name: Checkout
@@ -53,12 +46,11 @@ jobs:
           context: ${{ matrix.context }}
           file: ${{ matrix.file }}
           push: true
-          tags: quay.io/ecosystem-appeng/${{ matrix.name }}:${{ steps.version.outputs.tag }}
+          tags: quay.io/rarnaud/${{ matrix.name }}:${{ steps.version.outputs.tag }}
           build-args: |
             IMAGE_TAG=${{ steps.version.outputs.tag }}
 
   package-helm-charts:
-    if: github.repository == 'rh-ai-quickstart/ai-architecture-charts'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -86,7 +78,7 @@ jobs:
 
       - name: Generate Helm index
         run: |
-          helm repo index gh-pages --url https://rh-ai-quickstart.github.io/ai-architecture-charts --merge gh-pages/index.yaml
+          helm repo index gh-pages --url https://Roming22.github.io/ai-architecture-charts --merge gh-pages/index.yaml
 
       - name: Commit and push to gh-pages
         run: |
