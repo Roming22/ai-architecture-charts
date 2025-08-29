@@ -3,166 +3,186 @@ entries:
   configure-pipeline:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-08-21T14:35:21.376498071Z"
+    created: "2025-08-29T14:48:35.168446378Z"
     description: A Helm chart for Kubernetes
-    digest: a303b3074994ab04e50c09ac4a5f920c1da1154543fd59a1d5c015cbaba2a74a
+    digest: 07c7fc18e936ebd95421d13956e62b4d38b3a811f80249c6536d64ba62bc71a6
     name: configure-pipeline
     type: application
     urls:
-    - https://roming22.github.io/ai-architecture-charts/configure-pipeline-0.1.0.tgz
+    - https://Roming22.github.io/ai-architecture-charts/configure-pipeline-0.1.0.tgz
     version: 0.1.0
   ingestion-pipeline:
   - apiVersion: v2
     appVersion: 0.2.16
-    created: "2025-08-21T14:35:21.378169483Z"
+    created: "2025-08-29T14:48:35.17053473Z"
     description: A Helm chart for Kubernetes
     digest: 87a348b73b92e63f3b9d3c1da6522ed9da0458d7887ea4f36de9a6cb2adceda0
     name: ingestion-pipeline
     type: application
     urls:
-    - https://roming22.github.io/ai-architecture-charts/ingestion-pipeline-0.3.0.tgz
+    - https://Roming22.github.io/ai-architecture-charts/ingestion-pipeline-0.3.0.tgz
     version: 0.3.0
   - apiVersion: v2
+    appVersion: 0.2.18
+    created: "2025-08-29T14:48:35.169539125Z"
+    description: A Helm chart for Kubernetes
+    digest: ef61b1ae1ca2203989abdd343e01313568ecd9a3ca166e1ff1c31d558b620a4e
+    name: ingestion-pipeline
+    type: application
+    urls:
+    - https://Roming22.github.io/ai-architecture-charts/ingestion-pipeline-0.2.18.tgz
+    version: 0.2.18
+  - apiVersion: v2
     appVersion: 0.2.16
-    created: "2025-08-21T14:35:21.377176318Z"
+    created: "2025-08-29T14:48:35.169185085Z"
     description: A Helm chart for Kubernetes
     digest: 4eb6553498ceaca5eef019a8743ede0ccc59ff6da037becd054c802a7ee34122
     name: ingestion-pipeline
     type: application
     urls:
-    - https://roming22.github.io/ai-architecture-charts/ingestion-pipeline-0.2.16.tgz
+    - https://Roming22.github.io/ai-architecture-charts/ingestion-pipeline-0.2.16.tgz
     version: 0.2.16
   - apiVersion: v2
     appVersion: 0.2.9
-    created: "2025-08-21T14:35:21.377818828Z"
+    created: "2025-08-29T14:48:35.170171764Z"
     description: A Helm chart for Kubernetes
     digest: 20abfdc13920b70924f9d4c6315ee0323b8649acc180c57a3bb1706680b6280c
     name: ingestion-pipeline
     type: application
     urls:
-    - https://roming22.github.io/ai-architecture-charts/ingestion-pipeline-0.2.9.tgz
+    - https://Roming22.github.io/ai-architecture-charts/ingestion-pipeline-0.2.9.tgz
     version: 0.2.9
   - apiVersion: v2
     appVersion: 0.2.8
-    created: "2025-08-21T14:35:21.377506705Z"
+    created: "2025-08-29T14:48:35.169857127Z"
     description: A Helm chart for Kubernetes
     digest: 3757ec6f5edc4018465d3c14b37bbfd1e72e01feb62f05f26542592de647a6c8
     name: ingestion-pipeline
     type: application
     urls:
-    - https://roming22.github.io/ai-architecture-charts/ingestion-pipeline-0.2.8.tgz
+    - https://Roming22.github.io/ai-architecture-charts/ingestion-pipeline-0.2.8.tgz
     version: 0.2.8
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-08-21T14:35:21.376801718Z"
+    created: "2025-08-29T14:48:35.168788055Z"
     description: A Helm chart for Kubernetes
     digest: b8f7286c86bf68e6a246e256611b81e1c400e6a2937fdcbc0d3cbde5396280ca
     name: ingestion-pipeline
     type: application
     urls:
-    - https://roming22.github.io/ai-architecture-charts/ingestion-pipeline-0.1.0.tgz
+    - https://Roming22.github.io/ai-architecture-charts/ingestion-pipeline-0.1.0.tgz
     version: 0.1.0
   llama-stack:
   - apiVersion: v2
+    appVersion: 0.2.18
+    created: "2025-08-29T14:48:35.173205197Z"
+    description: A Helm chart for Kubernetes
+    digest: d88ad1c7fddd44e88692a2782029849edf85224f357b0d5fe3220ab54ba08e3d
+    name: llama-stack
+    type: application
+    urls:
+    - https://Roming22.github.io/ai-architecture-charts/llama-stack-0.2.18.tgz
+    version: 0.2.18
+  - apiVersion: v2
     appVersion: 0.2.16
-    created: "2025-08-21T14:35:21.380047161Z"
+    created: "2025-08-29T14:48:35.172254445Z"
     description: A Helm chart for Kubernetes
     digest: 5f8ad12d84098ec1b7d9266948c05d592c38e631ba897284a4b5deb46e981809
     name: llama-stack
     type: application
     urls:
-    - https://roming22.github.io/ai-architecture-charts/llama-stack-0.2.16.tgz
+    - https://Roming22.github.io/ai-architecture-charts/llama-stack-0.2.16.tgz
     version: 0.2.16
   - apiVersion: v2
     appVersion: 0.2.14
-    created: "2025-08-21T14:35:21.379160775Z"
+    created: "2025-08-29T14:48:35.171536277Z"
     description: A Helm chart for Kubernetes
     digest: 02e238d7c85a4aacc661b04e422a9a1bf7ef8603ceb3f5051919abbe548b706b
     name: llama-stack
     type: application
     urls:
-    - https://roming22.github.io/ai-architecture-charts/llama-stack-0.2.14.tgz
+    - https://Roming22.github.io/ai-architecture-charts/llama-stack-0.2.14.tgz
     version: 0.2.14
   - apiVersion: v2
     appVersion: 0.2.9
-    created: "2025-08-21T14:35:21.381442047Z"
+    created: "2025-08-29T14:48:35.174530801Z"
     description: A Helm chart for Kubernetes
     digest: c0a85dd9ae92cb89e65eddd765761205d6459eb59269d5ad46fa9add98173541
     name: llama-stack
     type: application
     urls:
-    - https://roming22.github.io/ai-architecture-charts/llama-stack-0.2.9.tgz
+    - https://Roming22.github.io/ai-architecture-charts/llama-stack-0.2.9.tgz
     version: 0.2.9
   - apiVersion: v2
     appVersion: 0.2.8
-    created: "2025-08-21T14:35:21.380911776Z"
+    created: "2025-08-29T14:48:35.174048873Z"
     description: A Helm chart for Kubernetes
     digest: 74d614de3bb741d59fb690dd27581509a750b8c64287d994dc32efd788e3a48b
     name: llama-stack
     type: application
     urls:
-    - https://roming22.github.io/ai-architecture-charts/llama-stack-0.2.8.tgz
+    - https://Roming22.github.io/ai-architecture-charts/llama-stack-0.2.8.tgz
     version: 0.2.8
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-08-21T14:35:21.378681079Z"
+    created: "2025-08-29T14:48:35.171046284Z"
     description: A Helm chart for Kubernetes
     digest: d6fe8417acf13ef7598bd069fe70082540bed84355300fc67b4afab83204727b
     name: llama-stack
     type: application
     urls:
-    - https://roming22.github.io/ai-architecture-charts/llama-stack-0.1.0.tgz
+    - https://Roming22.github.io/ai-architecture-charts/llama-stack-0.1.0.tgz
     version: 0.1.0
   llm-service:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-08-21T14:35:21.382137887Z"
+    created: "2025-08-29T14:48:35.175073032Z"
     description: A Helm chart for Kubernetes
-    digest: 51b7b46bf08c80a0f50f7194608c613fea119164e2b16512c9cbfc6c88e1064c
+    digest: cfc1b5468e2e64ea4804b7763f0d3235bea6fca5b1f8001b9dad950942ea34ad
     name: llm-service
     type: application
     urls:
-    - https://roming22.github.io/ai-architecture-charts/llm-service-0.1.0.tgz
+    - https://Roming22.github.io/ai-architecture-charts/llm-service-0.1.0.tgz
     version: 0.1.0
   mcp-servers:
   - apiVersion: v2
     appVersion: 0.1.0
-    created: "2025-08-21T14:35:21.382331468Z"
+    created: "2025-08-29T14:48:35.175224303Z"
     description: A Helm chart for Kubernetes
-    digest: afeec7dff16b1eaa7f0c62ef6148240a16b508873ca02250beff8abdd3f16cf2
+    digest: 00e25f1e2949231f8f79b5fcdac8d58e5809c07ad3410753a930df55a5c1a0bd
     name: mcp-servers
     type: application
     urls:
-    - https://roming22.github.io/ai-architecture-charts/mcp-servers-0.1.0.tgz
+    - https://Roming22.github.io/ai-architecture-charts/mcp-servers-0.1.0.tgz
     version: 0.1.0
   mcp-weather:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-08-21T14:35:21.382597476Z"
+    created: "2025-08-29T14:48:35.175474149Z"
     description: A Helm chart for Kubernetes
     digest: 091c9182330ea5a96872c3fe7ee98f653c9077d9c09651eb6afd6d1a66e3e53a
     name: mcp-weather
     type: application
     urls:
-    - https://roming22.github.io/ai-architecture-charts/mcp-weather-0.1.0.tgz
+    - https://Roming22.github.io/ai-architecture-charts/mcp-weather-0.1.0.tgz
     version: 0.1.0
   minio:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-08-21T14:35:21.382941288Z"
+    created: "2025-08-29T14:48:35.175848597Z"
     description: A Helm chart for Kubernetes
-    digest: 06970b03af57fea45aad76892ff8a079c7b0792bd6588cf99fd39f240589d8b1
+    digest: 190df046e9e706f17404e467627020472ef79cf54d073cc10adae26a45e40684
     name: minio
     type: application
     urls:
-    - https://roming22.github.io/ai-architecture-charts/minio-0.1.0.tgz
+    - https://Roming22.github.io/ai-architecture-charts/minio-0.1.0.tgz
     version: 0.1.0
   oracle23ai:
   - apiVersion: v2
     appVersion: 23ai
-    created: "2025-08-21T14:35:21.38351629Z"
+    created: "2025-08-29T14:48:35.176453104Z"
     description: A Helm chart for Oracle 23AI Database on Kubernetes
-    digest: e3ca329697ccba261d738127c5ccf5e2dbaa59146033c71e0ab03106a0750aac
+    digest: 98b4979989e5b0ad2c17e33afb757e1e9f2ebf59f3d834f8471d7e62fa2f253a
     home: https://github.com/rhkp/ai-architecture-charts
     icon: https://www.oracle.com/a/ocom/img/sql-dev-icon.svg
     keywords:
@@ -180,17 +200,17 @@ entries:
     - https://docs.oracle.com/en/database/oracle/oracle-database/23/
     type: application
     urls:
-    - https://roming22.github.io/ai-architecture-charts/oracle23ai-0.1.0.tgz
+    - https://Roming22.github.io/ai-architecture-charts/oracle23ai-0.1.0.tgz
     version: 0.1.0
   pgvector:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2025-08-21T14:35:21.383841166Z"
+    created: "2025-08-29T14:48:35.176843371Z"
     description: A Helm chart for Kubernetes
-    digest: d524333dd3e6d2bf60cc0c7376f5ff8242e73c4d16c91faa3d566b184810ae44
+    digest: 9ee72dc60c662f5e9079d6d82924e314579058c5eb9e92a621cfe71439dccfd8
     name: pgvector
     type: application
     urls:
-    - https://roming22.github.io/ai-architecture-charts/pgvector-0.1.0.tgz
+    - https://Roming22.github.io/ai-architecture-charts/pgvector-0.1.0.tgz
     version: 0.1.0
-generated: "2025-08-21T14:35:21.375966327Z"
+generated: "2025-08-29T14:48:35.168076709Z"
