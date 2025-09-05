@@ -1,4 +1,4 @@
-{{- if eq (include "ingestion-pipeline.signDatabase" .) "true" }}
+{{- if .Values.defaultPipeline.enableSigning }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
