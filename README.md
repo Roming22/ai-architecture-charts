@@ -221,7 +221,7 @@ To add a new buildable component, place your source code and Containerfile in th
 
 ### Helm Repository and Versioning
 
-This project maintains a Helm repository at `https://rh-ai-quickstart.github.io/ai-architecture-charts` with full version history:
+This project maintains a Helm repository at `https://roming22.github.io/ai-architecture-charts` with full version history:
 
 - **Version tracking**: All chart versions are preserved and available for download
 - **Automated publishing**: GitHub workflow automatically packages and publishes charts to the repository
